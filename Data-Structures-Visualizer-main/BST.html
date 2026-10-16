@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Binary Search Tree Visualizer </title>
+        <link rel = "stylesheet" href = "Styling.css" >
+    </head>
+    <body>
+        <div class = "Heading">
+            <p class = "Title">
+                Binary Search Tree
+            </p>
+        </div>
+        <div class = "main-content">
+            <canvas id = "canvas" class = "canvas" width = "1500" height = "500">
+            </canvas>
+            <table class = "Buttons">
+                <td>
+                    <input type = "text" value size = "4">
+                </td>
+                <td>
+                    <input type = "button" value = "Insert">
+                </td>
+                <td>
+                    <input type = "text" value size = "4">
+                </td>
+                <td>
+                    <input type = "button" value = "delete">
+                </td>
+            </table>
+        </div>
+        <script>
+            class TreeNode {
+                constructor(value) {
+                    this.value = value;
+                    this.left = null;
+                    this.right = null;
+                    this.x = 0; 
+                    this.y = 0;
+                }
+            }
+            class BinarySearchTree {
+                constructor(canvas) {
+                    this.root = null;
+                    this.ctx = canvas.getContext("2d");
+                }
+                insert(value) {
+                    const newNode = new TreeNode(value);
+                    if (this.root === null) {
+                        this.root = newNode;
+                        this.root.x = canvas.width / 2;
+                        this.root.y = 50;
+                    } else this._insertNode(this.root, newNode, canvas.width / 4);
+                    this.render();
+                }
+                _insertNode(node, newNode, offset) {
+                    if (newNode.value < node.value) {
+                        if (node.left === null) {
+                            node.left = newNode;
+                            node.left.x = node.x - offset;
+                            node.left.y = node.y + 50;
+                        } else this._insertNode(node.left, newNode, offset / 2);
+                    } else {
+                        if (node.right === null) {
+                            node.right = newNode;
+                            node.right.x = node.x + offset;
+                            node.right.y = node.y + 50;
+                        } else this._insertNode(node.right, newNode, offset / 2);
+                    }
+                }
+                delete(value) {
+                    this.root = this._deleteNode(this.root, value);
+                    this.render();
+                }
+                _deleteNode(node, value) {
+                    if (node == null) return node;
+
+                    if (value < node.value) node.left = this._deleteNode(node.left, value); 
+                    else if (value > node.value) node.right = this._deleteNode(node.right, value);
+                    else {
+                        if (node.left == null) return node.right;
+                        else if (node.right == null) return node.left;
+
+                        let successor = this._minValueNode(node.right);
+                        node.value = successor.value;
+                        node.right = this._deleteNode(node.right, successor.value);
+                    }
+                    return node;
+                }
+                _minValueNode(node) {
+                    while (node.left != null) node = node.left;
+                    return node;
+                }
+                render() {
+                    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    this._drawNode(this.root);
+                }
+                _drawNode(node) {
+                    if (node !== null) {
+                        this._drawCircle(node);
+                        if (node.left) this._drawLine(node, node.left);
+                        if (node.right) this._drawLine(node, node.right);
+                        this._drawNode(node.left);
+                        this._drawNode(node.right);
+                    }
+                }
+                _drawCircle(node) {
+                    this.ctx.beginPath();
+                    this.ctx.arc(node.x, node.y, 20, 0, Math.PI * 2, true);
+                    this.ctx.fillStyle = "#fff";
+                    this.ctx.fill();
+                    this.ctx.lineWidth = 2;
+                    this.ctx.strokeStyle = "#000";
+                    this.ctx.stroke();
+                    this.ctx.closePath();
+                    this.ctx.fillStyle = "#000";
+                    this.ctx.font = "16px Arial";
+                    this.ctx.textAlign = "center";
+                    this.ctx.fillText(node.value, node.x, node.y + 5);
+                }
+                _drawLine(fromNode, toNode) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(fromNode.x, fromNode.y + 20);
+                    this.ctx.lineTo(toNode.x, toNode.y);
+                    this.ctx.strokeStyle = "#000";
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                }
+            }
+            const canvas = document.getElementById("canvas");
+            const bst = new BinarySearchTree(canvas);
+
+            document.querySelector(".Buttons input[value='Insert']").onclick = function () {
+                const inputField = document.querySelectorAll(".Buttons input[type='text']")[0];
+                const value = parseInt(inputField.value);
+                if (!isNaN(value)) {
+                    bst.insert(value);
+                    inputField.value = '';
+                }
+            };
+
+            document.querySelector(".Buttons input[value='delete']").onclick = function () {
+                const inputField = document.querySelectorAll(".Buttons input[type='text']")[1];
+                const value = parseInt(inputField.value);
+                if (!isNaN(value)) {
+                    bst.delete(value);
+                    inputField.value = '';
+                }
+            };
+        </script>
+    </body>
+</html>

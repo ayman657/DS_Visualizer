@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Linked List Visualizer</title>
+    <link rel="stylesheet" href="Styling.css">
+</head>
+<body>
+    <div class="Heading">
+        <p class="Title">Linked List Visualization</p>
+    </div>
+    <div class="main-content">
+        <h2>Singly Linked List</h2>
+        <canvas id="singlyCanvas" width="1000" height="200"></canvas>
+        <input type="text" id="singlyInput" placeholder="Enter value" size="4">
+        <input type="button" id="singlyAdd" value="Add Node">
+
+        <h2>Doubly Linked List</h2>
+        <canvas id="doublyCanvas" width="1000" height="200"></canvas>
+        <input type="text" id="doublyInput" placeholder="Enter value" size="4">
+        <input type="button" id="doublyAdd" value="Add Node">
+
+        <h2>Circular Linked List</h2>
+        <canvas id="circularCanvas" width="1000" height="200"></canvas>
+        <input type="text" id="circularInput" placeholder="Enter value" size="4">
+        <input type="button" id="circularAdd" value="Add Node">
+    </div>
+    <script>
+        class SinglyLinkedList {
+            constructor(canvas) {
+                this.head = null;
+                this.canvas = canvas;
+                this.ctx = canvas.getContext("2d");
+                this.render();
+            }
+            add(value) {
+                const newNode = { value, next: null };
+                if (!this.head) {
+                    this.head = newNode;
+                } else {
+                    let current = this.head;
+                    while (current.next) {
+                        current = current.next;
+                    }
+                    current.next = newNode;
+                }
+                this.render();
+            }
+            render() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                let current = this.head;
+                let x = 20;
+                while (current) {
+                    this.ctx.fillStyle = "#fff";
+                    this.ctx.fillRect(x, 30, 120, 40);
+                    this.ctx.fillStyle = "#000";
+                    this.ctx.strokeRect(x, 30, 120, 40);
+                    this.ctx.fillText(current.value, x + 60, 55);
+                    this.ctx.fillStyle = "#fff";
+                    this.ctx.fillRect(x, 100, 120, 40);
+                    this.ctx.fillStyle = "#000";
+                    this.ctx.strokeRect(x, 100, 120, 40);
+                    this.ctx.fillText(current.next ? current.next.value : 'NULL', x + 60, 125);
+                    if (current.next) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x + 130, 70);
+                        this.ctx.lineTo(x + 140, 70);
+                        this.ctx.stroke();
+                        this.ctx.font = "18px Arial";
+                        this.ctx.fillText('>', x + 145, 75);
+                    }
+                    current = current.next;
+                    x += 160;
+                }
+            }
+        }
+
+        class DoublyLinkedList {
+            constructor(canvas) {
+                this.head = null;
+                this.canvas = canvas;
+                this.ctx = canvas.getContext("2d");
+                this.render();
+            }
+            add(value) {
+                const newNode = { value, next: null, prev: null };
+                if (!this.head) {
+                    this.head = newNode;
+                } else {
+                    let current = this.head;
+                    while (current.next) {
+                        current = current.next;
+                    }
+                    current.next = newNode;
+                    newNode.prev = current;
+                }
+                this.render();
+            }
+            render() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                let current = this.head;
+                let x = 20;
+                while (current) {
+                    this.ctx.fillStyle = "#fff";
+                    this.ctx.fillRect(x, 20, 120, 40);
+                    this.ctx.fillStyle = "#000";
+                    this.ctx.strokeRect(x, 20, 120, 40);
+                    this.ctx.fillText(current.prev ? current.prev.value : 'NULL', x + 60, 45);
+                    this.ctx.fillStyle = "#fff";
+                    this.ctx.fillRect(x, 80, 120, 40);
+                    this.ctx.fillStyle = "#000";
+                    this.ctx.strokeRect(x, 80, 120, 40);
+                    this.ctx.fillText(current.value, x + 60, 105);
+                    this.ctx.fillStyle = "#fff";
+                    this.ctx.fillRect(x, 140, 120, 40);
+                    this.ctx.fillStyle = "#000";
+                    this.ctx.strokeRect(x, 140, 120, 40);
+                    this.ctx.fillText(current.next ? current.next.value : 'NULL', x + 60, 165);
+                    if (current.next) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x + 130, 90);
+                        this.ctx.lineTo(x + 140, 90);
+                        this.ctx.stroke();
+                        this.ctx.font = "18px Arial";
+                        this.ctx.fillText('>', x + 145, 95);
+                    }
+                    current = current.next;
+                    x += 160; 
+                }
+            }
+        }
+
+        class CircularLinkedList {
+            constructor(canvas) {
+                this.head = null;
+                this.canvas = canvas;
+                this.ctx = canvas.getContext("2d");
+                this.render();
+            }
+            add(value) {
+                const newNode = { value, next: null };
+                if (!this.head) {
+                    this.head = newNode;
+                    newNode.next = newNode; 
+                } else {
+                    let current = this.head;
+                    while (current.next !== this.head) {
+                        current = current.next;
+                    }
+                    current.next = newNode;
+                    newNode.next = this.head;
+                }
+                this.render();
+            }
+            render() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                if (!this.head) return;
+                let current = this.head;
+                let x = 20;
+                do {
+                    this.ctx.fillStyle = "#fff";
+                    this.ctx.fillRect(x, 30, 120, 40);
+                    this.ctx.fillStyle = "#000";
+                    this.ctx.strokeRect(x, 30, 120, 40);
+                    this.ctx.fillText(current.value, x + 60, 55);
+                    this.ctx.fillStyle = "#fff";
+                    this.ctx.fillRect(x, 100, 120, 40);
+                    this.ctx.fillStyle = "#000";
+                    this.ctx.strokeRect(x, 100, 120, 40);
+                    this.ctx.fillText(current.next.value, x + 60, 125);
+                    if (current.next) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x + 130, 90);
+                        this.ctx.lineTo(x + 140, 90);
+                        this.ctx.stroke();
+                        this.ctx.font = "18px Arial";
+                        this.ctx.fillText('>', x + 145, 95);
+                    }
+                    current = current.next;
+                    x += 160; 
+                } while (current !== this.head);
+            }
+        }
+        const singlyCanvas = document.getElementById("singlyCanvas");
+        const singlyList = new SinglyLinkedList(singlyCanvas);
+        document.getElementById("singlyAdd").onclick = function () {
+            const input = document.getElementById("singlyInput").value;
+            if (input) {
+                singlyList.add(input);
+                document.getElementById("singlyInput").value = '';
+            }
+        };
+        const doublyCanvas = document.getElementById("doublyCanvas");
+        const doublyList = new DoublyLinkedList(doublyCanvas);
+        document.getElementById("doublyAdd").onclick = function () {
+            const input = document.getElementById("doublyInput").value;
+            if (input) {
+                doublyList.add(input);
+                document.getElementById("doublyInput").value = '';
+            }
+        };
+        const circularCanvas = document.getElementById("circularCanvas");
+        const circularList = new CircularLinkedList(circularCanvas);
+        document.getElementById("circularAdd").onclick = function () {
+            const input = document.getElementById("circularInput").value;
+            if (input) {
+                circularList.add(input);
+                document.getElementById("circularInput").value = '';
+            }
+        };
+    </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,22 @@
+.Heading{
+    font: 200% Verdana, Arial, Helvetica, sans-serif;
+    margin: 0; 
+	padding: 0;
+    height: 50fr; 
+	color: #00ff00;
+}
+.Title{
+    background: #880099; 
+	color:#ffCC33;
+	padding: 0 10px 0 20px;
+    text-align: center;
+}
+.canvas{
+    background-color: lightgrey;
+}
+.input{
+    margin-left: 100px;
+}
+.output{
+    margin-top: 10px;
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Queue Visualizer</title>
+    <link rel="stylesheet" href="Styling.css">
+</head>
+<body>
+    <div class="Heading">
+        <p class="Title">Queue Visualization</p>
+    </div>
+    <div class="main-content">
+        <canvas id="queueCanvas" width="1500" height="400"></canvas>
+        <input type="text" id="queueInput" placeholder="Enter value" size="10">
+        <input type="button" id="queueEnqueue" value="Enqueue">
+        <input type="button" id="queueDequeue" value="Dequeue">
+        <div>
+            <input class = "output" type="text" id="output" placeholder="Output" size="20" readonly>
+        </div>
+    </div>
+    <script>
+        class Queue {
+            constructor(canvas) {
+                this.queue = [];
+                this.canvas = canvas;
+                this.ctx = canvas.getContext("2d");
+                this.render();
+            }
+            enqueue(value) {
+                this.queue.push(value);
+                this.render();
+                return value;  
+            }
+            dequeue() {
+                if (this.queue.length === 0) return null;
+                const removedValue = this.queue.shift();
+                this.render();
+                return removedValue;
+            }
+            render() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                for (let i = 0; i < this.queue.length; i++) {
+                    this.ctx.fillStyle = "#fff";
+                    this.ctx.fillRect(100 + (i * 80), 200, 70, 40);
+                    this.ctx.fillStyle = "#000";
+                    this.ctx.strokeRect(100 + (i * 80), 200, 70, 40);
+                    this.ctx.fillText(this.queue[i], 135 + (i * 80), 225);
+                }
+                if (this.queue.length > 0) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(100, 200);
+                    this.ctx.lineTo(100, 180);
+                    this.ctx.strokeStyle = 'red';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    this.ctx.fillText('Front', 105, 175);
+
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(100 + (this.queue.length - 1) * 80 + 70, 200);
+                    this.ctx.lineTo(100 + (this.queue.length - 1) * 80 + 70, 180);
+                    this.ctx.strokeStyle = 'blue';
+                    this.ctx.stroke();
+                    this.ctx.fillText('Rear', 105 + (this.queue.length - 1) * 80 + 70, 175);
+                }
+            }
+        }
+        const queueCanvas = document.getElementById("queueCanvas");
+        const queue = new Queue(queueCanvas);
+        const outputBox = document.getElementById("output");
+        document.getElementById("queueEnqueue").onclick = function () {
+            const input = document.getElementById("queueInput").value;
+            if (input) {
+                const addedValue = queue.enqueue(input);
+                outputBox.value = `Added: ${addedValue}`;
+                document.getElementById("queueInput").value = '';
+            }
+        };
+        document.getElementById("queueDequeue").onclick = function () {
+            const removedValue = queue.dequeue();
+            outputBox.value = removedValue !== null ? `Removed: ${removedValue}` : "Queue is empty";
+        };
+    </script>
+</body>
+</html>

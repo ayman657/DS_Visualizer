@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stack Visualizer</title>
+    <link rel="stylesheet" href="Styling.css">
+</head>
+<body>
+    <div class="Heading">
+        <p class="Title">Stack Visualization</p>
+    </div>
+    <div class="main-content">
+        <canvas id="stackCanvas" width="400" height="400"></canvas>
+        <input type="text" id="stackInput" placeholder="Enter value" size="8">
+        <input type="button" id="stackPush" value="Push">
+        <input type="button" id="stackPop" value="Pop">
+        <div>
+            <input class = "input" type="text" id="output" placeholder="Output" size="20" readonly>
+        </div>
+    </div>
+    <script>
+        class Stack {
+            constructor(canvas) {
+                this.stack = [];
+                this.canvas = canvas;
+                this.ctx = canvas.getContext("2d");
+                this.render();
+            }
+            push(value) {
+                this.stack.push(value);
+                this.render();
+                return value;  
+            }
+            pop() {
+                const poppedValue = this.stack.pop();
+                this.render();
+                return poppedValue; 
+            }
+            render() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                for (let i = 0; i < this.stack.length; i++) {
+                    this.ctx.fillStyle = "#fff";
+                    this.ctx.fillRect(150, 350 - (i * 50), 100, 40);
+                    this.ctx.fillStyle = "#000";
+                    this.ctx.strokeRect(150, 350 - (i * 50), 100, 40);
+                    this.ctx.fillText(this.stack[i], 200, 370 - (i * 50));
+                }
+                if (this.stack.length > 0) {
+                    const topY = 350 - (this.stack.length - 1) * 50;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(200, topY);
+                    this.ctx.lineTo(200, topY - 20);
+                    this.ctx.strokeStyle = 'red';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    this.ctx.fillText('Top', 205, topY - 25);
+                }
+            }
+        }
+        const stackCanvas = document.getElementById("stackCanvas");
+        const stack = new Stack(stackCanvas);
+        const outputBox = document.getElementById("output");
+        document.getElementById("stackPush").onclick = function () {
+            const input = document.getElementById("stackInput").value;
+            if (input) {
+                const pushedValue = stack.push(input);
+                outputBox.value = `Pushed: ${pushedValue}`;
+                document.getElementById("stackInput").value = '';
+            }
+        };
+        document.getElementById("stackPop").onclick = function () {
+            const poppedValue = stack.pop();
+            outputBox.value = poppedValue !== undefined ? `Popped: ${poppedValue}` : "Stack is empty";
+        };
+    </script>
+</body>
+</html>
+
+
